@@ -2,10 +2,13 @@ from django.shortcuts import render
 from .models import Product, Contact, Orders, OrderUpdate
 from math import ceil
 import json
-
+from django.views.decorators.csrf import csrf_exempt
+from PayTM import Checksum
 # Create your views here.
 from django.http import HttpResponse
 
+
+MERCHANT_KEY = 'kbzk1DSbJiV_O3p5';
 
 def index(request):
     allProds = []
@@ -87,5 +90,23 @@ def checkout(request):
         update.save()
         thank = True
         id = order.order_id
-        return render(request, 'shop/checkout.html', {'thank':thank, 'id': id})
+        # return render(request, 'shop/checkout.html', {'thank':thank, 'id': id})
+        # request PayTM to transfer the amount to your account after payment by the user
+        param_dict = {
+            'MID':'YOUR_MERCHANT_ID',
+            'ORDER_ID':'order.order_id',
+            'TXN_AMOUNT': str(amount),
+            'CUST_ID': email,
+            'INDUSTRY_TYPE_ID':'Retail',
+            'WEBSITE':'WEBSTAGING',
+            'CHANNEL_ID':'WEB',
+	        'CALLBACK_URL':'http://127.0.0.1:8000/shop/handlepayment/',
+        }
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
+        return render(request, 'shop/paytm.html', {'param_dict':param_dict})
     return render(request, 'shop/checkout.html')
+
+# PayTM sends Post requests here
+@csrf_exempt
+def handlepayment(request):
+    return HttpResponse('done')
