@@ -109,4 +109,19 @@ def checkout(request):
 # PayTM sends Post requests here
 @csrf_exempt
 def handlepayment(request):
-    return HttpResponse('done')
+    form = request.POST
+    response_dict = {}
+    for i in form.keys():
+        response_dict[i] = form[i]
+        if i == 'CHECKSUMHASH':
+            checksum = form[i]
+    verify = Checksum.verify_checksum(response_dict, MERCHANT_KEY, checksum)
+    if verify:
+        if response_dict['RESPCODE'] == '01':
+            print('Order successful')
+        else:
+            print('Order was not successful because ' + response_dict['RESPMSG'])
+    
+    return render(request, 'shop/paymentstatus.html', {'response': response_dict})
+
+    
