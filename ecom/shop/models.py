@@ -29,6 +29,7 @@ class Contact(models.Model):
 class Orders(models.Model):
     order_id = models.AutoField(primary_key=True)
     items_json = models.CharField(max_length=5000)
+    amount = models.IntegerField(default=0)
     name = models.CharField(max_length=90)
     phone = models.CharField(max_length=20, default='')
     email = models.CharField(max_length=120)
@@ -36,3 +37,13 @@ class Orders(models.Model):
     city = models.CharField(max_length=120)
     state = models.CharField(max_length=120)
     zip_code = models.CharField(max_length=120)
+
+
+class OrderUpdate(models.Model):
+    update_id = models.AutoField(primary_key=True)
+    order_id = models.IntegerField(default="")
+    update_desc = models.CharField(max_length=5000)
+    timestamp = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.update_desc[0:7] + "..."

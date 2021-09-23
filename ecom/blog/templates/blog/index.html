@@ -1,14 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    Hello Blog
+{% extends 'blog/basic.html' %}
+{% block body %}
+
+    <!-- Hello Blog
     {% load static %}
     <a href="{% static 'blog/mystatic.txt' %}"> Click me </a>
-</body>
-</html>
+ -->
+<div class="container mt-3">
+  <div class="row my-2">
+  {% for item in myposts %}
+
+        <div class="col-md-6">
+          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+              <strong class="d-inline-block mb-2 text-primary">{{item.head0}}</strong>
+              <h3 class="mb-0">{{item.title}}</h3>
+              <div class="mb-1 text-muted">{{item.pub_date}}</div>
+              <p class="card-text mb-auto">{{item.head1}}</p>
+              <a href="blogpost/{{item.post_id}}" class="stretched-link">Continue reading</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+              <img src="/media/{{item.thumbnail}}" class="bd-placeholder-img" width="200" height="250" aria-label="Placeholder: Thumbnail">
+                 </img>
+            </div>
+          </div>
+        </div>
+        {% if forloop.counter|divisibleby:2 %}
+      </div>    <div class="row my-2">
+      {% endif %}   
+        {% endfor %}      
+</div>
+ {% endblock %}
